@@ -40,8 +40,8 @@ function say(text){
 function voiceNote(){
   var msg='الصوت بيشتغل بعد أول ضغطة. ارفع صوت التليفون.';
   try{
-    if(!ttsOk) msg='الصوت مش متاح على المتصفح ده، بس كل الشرح مكتوب قدامك.';
-    else{ var vs=speechSynthesis.getVoices(); if(vs.length&&!voice) msg='التليفون ده مفيهوش صوت عربي، بس كل الشرح مكتوب قدامك.'; }
+    if(!ttsOk) msg='الصوت مش متاح على المتصفح هذا، بس كل الشرح مكتوب قدامك.';
+    else{ var vs=speechSynthesis.getVoices(); if(vs.length&&!voice) msg='التليفون هذا مفيهوش صوت عربي، بس كل الشرح مكتوب قدامك.'; }
   }catch(e){}
   return '<p class="hint">🔊 '+msg+'</p>';
 }
@@ -57,14 +57,14 @@ numbers:{domain:'math',title:'الأعداد من 1 إلى 10',sub:'نتعرف �
     function draw(){
       var t=cur?numTone(cur):'blue';
       root.innerHTML='<div class="stage tone-'+t+'">'+(cur
-        ?'<div class="bignum">'+cur+'</div><div class="cap">ده رقم '+NUM[cur]+'</div><div class="dotsrow" aria-hidden="true">'+'<span class="dot"></span>'.repeat(cur)+'</div><button class="listen" data-say="ده رقم '+NUM[cur]+'">🔊 اسمع تاني</button>'
+        ?'<div class="bignum">'+cur+'</div><div class="cap">هذا رقم '+NUM[cur]+'</div><div class="dotsrow" aria-hidden="true">'+'<span class="dot"></span>'.repeat(cur)+'</div><button class="listen" data-say="هذا رقم '+NUM[cur]+'">🔊 اسمع تاني</button>'
         :'<div class="prompt">اضغط على أي رقم</div><div class="bignum faint">؟</div>')+'</div>'+
         '<div class="numgrid">'+range(1,10).map(function(n){ return '<button class="numbtn tone-'+numTone(n)+(n===cur?' on':'')+'" data-n="'+n+'">'+n+'</button>'; }).join('')+'</div>';
     }
     root.onclick=function(e){ var b=e.target.closest('[data-n]'); if(!b) return; cur=+b.dataset.n; draw(); say(NUM[cur]); };
     draw();
   },
-  frames:function(){ return range(1,10).map(function(n){ return {big:n,num:1,cap:'رقم '+NUM[n],sub:'●'.repeat(n),say:'ده رقم '+NUM[n]}; }); },
+  frames:function(){ return range(1,10).map(function(n){ return {big:n,num:1,cap:'رقم '+NUM[n],sub:'●'.repeat(n),say:'هذا رقم '+NUM[n]}; }); },
   make:function(S){
     var t=pickUnused(range(1,10),S);
     var others=shuffle(range(1,10).filter(function(x){return x!==t;})).slice(0,S.n-1);
@@ -80,7 +80,7 @@ quantity:{domain:'math',title:'الكميات وربط الرقم بالعدد',
     function draw(){
       root.innerHTML='<div class="stage"><div class="apples">'+range(1,n).map(function(i){ return '<span class="apple'+(i<=counted?' counted':'')+'">🍎<i>'+(i<=counted?i:'')+'</i></span>'; }).join('')+'</div>'+
         (counted===n?'<div class="bignum">'+n+'</div><div class="cap">'+APL(n)+'</div>':'<div class="prompt">اضغط وعدّ معانا</div>')+
-        '<button class="listen" data-count="1">🔊 عدّ معايا</button></div>'+
+        '<button class="listen" data-count="1">🔊 عدّ معي</button></div>'+
         '<div class="chips">'+[2,3,4,5,6,7].map(function(k){ return '<button class="chip'+(k===n?' on':'')+'" data-q="'+k+'" aria-label="'+k+' تفاحات">'+k+'</button>'; }).join('')+'</div>';
     }
     root.onclick=function(e){
@@ -194,7 +194,7 @@ food:{domain:'life',title:'الطعام والشراب',sub:'نفرق بين م�
   make:function(S){
     if(!S.order) S.order=shuffle(FOODS.concat(DRINKS)).slice(0,5);
     var x=S.order[S.i];
-    return {prompt:'ده طعام ولا شراب؟',say:x.n+'. هل هذا طعام أم شراب؟',correct:x.t,cls:'opt-word',
+    return {prompt:'هذا طعام ولا شراب؟',say:x.n+'. هل هذا طعام أم شراب؟',correct:x.t,cls:'opt-word',
       stage:'<div class="te big">'+x.e+'</div><div class="cap">'+x.n+'</div>',
       options:[{k:'food',v:'طعام'},{k:'drink',v:'شراب'}]};
   }
@@ -413,7 +413,7 @@ function activityScreen(key){
     view.innerHTML=top('أحسنت!','c-'+key)+
       '<div class="stage tone-orange"><div class="starsbig" aria-hidden="true">'+'<span>⭐</span>'.repeat(S.total)+'</div><div class="bignum small">أحسنت!</div><p class="cap">جمعت '+S.stars+' نجوم</p></div>'+
       '<button class="cta" id="again">العب تاني</button>'+
-      (ALL.indexOf(key)<ALL.length-1?'<button class="cta alt" data-go="c-'+ALL[ALL.indexOf(key)+1]+'">المفهوم اللي بعده</button>':'')+
+      (ALL.indexOf(key)<ALL.length-1?'<button class="cta alt" data-go="c-'+ALL[ALL.indexOf(key)+1]+'">المفهوم اللي بعهذا</button>':'')+
       '<button class="cta alt" data-go="home">الرئيسية</button>';
     say('أحسنت! جمعت '+S.stars+' نجوم');
   }
