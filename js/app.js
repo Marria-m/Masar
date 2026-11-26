@@ -27,6 +27,7 @@ function pickVoice(){ try{ var vs=speechSynthesis.getVoices(); voice=vs.filter(f
 if(ttsOk){ pickVoice(); try{ speechSynthesis.onvoiceschanged=pickVoice; }catch(e){} }
 function stopSay(){ try{ if(ttsOk) speechSynthesis.cancel(); }catch(e){} }
 function say(text){
+  return;
   if(!ttsOk||!text||!ST.sound) return;
   try{
     speechSynthesis.cancel();
