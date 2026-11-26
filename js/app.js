@@ -8,6 +8,12 @@ var KEY='masar-v2';
 var ST={name:'بطل',avatar:'🦁',stars:0,done:{},seen:{},sound:true};
 try{ var raw=localStorage.getItem(KEY); if(raw){ var p=JSON.parse(raw); for(var k in p) ST[k]=p[k]; } }catch(e){}
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(ST)); }catch(e){} }
+function applyTheme(){
+  var r=document.documentElement;
+  if(ST.theme==='dark'||ST.theme==='light') r.setAttribute('data-theme',ST.theme);
+  else r.removeAttribute('data-theme');
+}
+applyTheme();
 
 /* ---------- helpers ---------- */
 var timers=[];
@@ -40,8 +46,8 @@ function say(text){
 function voiceNote(){
   var msg='الصوت بيشتغل بعد أول ضغطة. ارفع صوت التليفون.';
   try{
-    if(!ttsOk) msg='الصوت مش متاح على المتصفح هذا، بس كل الشرح مكتوب قدامك.';
-    else{ var vs=speechSynthesis.getVoices(); if(vs.length&&!voice) msg='التليفون هذا مفيهوش صوت عربي، بس كل الشرح مكتوب قدامك.'; }
+    if(!ttsOk) msg='الصوت مش متاح على المتصفح هذا ، بس كل الشرح مكتوب قدامك.';
+    else{ var vs=speechSynthesis.getVoices(); if(vs.length&&!voice) msg='التليفون هذا  مفيهوش صوت عربي، بس كل الشرح مكتوب قدامك.'; }
   }catch(e){}
   return '<p class="hint">🔊 '+msg+'</p>';
 }
@@ -57,14 +63,14 @@ numbers:{domain:'math',title:'الأعداد من 1 إلى 10',sub:'نتعرف �
     function draw(){
       var t=cur?numTone(cur):'blue';
       root.innerHTML='<div class="stage tone-'+t+'">'+(cur
-        ?'<div class="bignum">'+cur+'</div><div class="cap">هذا رقم '+NUM[cur]+'</div><div class="dotsrow" aria-hidden="true">'+'<span class="dot"></span>'.repeat(cur)+'</div><button class="listen" data-say="هذا رقم '+NUM[cur]+'">🔊 اسمع تاني</button>'
+        ?'<div class="bignum">'+cur+'</div><div class="cap">هذا  رقم '+NUM[cur]+'</div><div class="dotsrow" aria-hidden="true">'+'<span class="dot"></span>'.repeat(cur)+'</div><button class="listen" data-say="هذا  رقم '+NUM[cur]+'">🔊 اسمع تاني</button>'
         :'<div class="prompt">اضغط على أي رقم</div><div class="bignum faint">؟</div>')+'</div>'+
         '<div class="numgrid">'+range(1,10).map(function(n){ return '<button class="numbtn tone-'+numTone(n)+(n===cur?' on':'')+'" data-n="'+n+'">'+n+'</button>'; }).join('')+'</div>';
     }
     root.onclick=function(e){ var b=e.target.closest('[data-n]'); if(!b) return; cur=+b.dataset.n; draw(); say(NUM[cur]); };
     draw();
   },
-  frames:function(){ return range(1,10).map(function(n){ return {big:n,num:1,cap:'رقم '+NUM[n],sub:'●'.repeat(n),say:'هذا رقم '+NUM[n]}; }); },
+  frames:function(){ return range(1,10).map(function(n){ return {big:n,num:1,cap:'رقم '+NUM[n],sub:'●'.repeat(n),say:'هذا  رقم '+NUM[n]}; }); },
   make:function(S){
     var t=pickUnused(range(1,10),S);
     var others=shuffle(range(1,10).filter(function(x){return x!==t;})).slice(0,S.n-1);
@@ -194,7 +200,7 @@ food:{domain:'life',title:'الطعام والشراب',sub:'نفرق بين م�
   make:function(S){
     if(!S.order) S.order=shuffle(FOODS.concat(DRINKS)).slice(0,5);
     var x=S.order[S.i];
-    return {prompt:'هذا طعام ولا شراب؟',say:x.n+'. هل هذا طعام أم شراب؟',correct:x.t,cls:'opt-word',
+    return {prompt:'هذا  طعام ولا شراب؟',say:x.n+'. هل هذا طعام أم شراب؟',correct:x.t,cls:'opt-word',
       stage:'<div class="te big">'+x.e+'</div><div class="cap">'+x.n+'</div>',
       options:[{k:'food',v:'طعام'},{k:'drink',v:'شراب'}]};
   }
@@ -294,7 +300,7 @@ function homeScreen(){
       var n=d.concepts.filter(function(c){return ST.done[c];}).length;
       return '<button class="dcard tone-'+d.tone+'" data-go="d-'+d.id+'"><span class="dicon">'+d.icon+'</span><span><span class="dname">'+d.name+'</span><br><span class="dcount">'+n+' من '+d.concepts.length+'</span></span></button>';
     }).join('')+'</div>'+
-    '<div class="sech"><h2>فيديوهات</h2><button data-go="videos">عرض الكل</button></div>'+
+    '<div class="sech"><h2>مقاطع</h2><button data-go="videos">عرض الكل</button></div>'+
     '<div class="hs">'+ALL.slice(0,5).map(vcard).join('')+'</div>'+
     voiceNote();
 }
@@ -317,18 +323,19 @@ function meScreen(){
   var lvl=Math.floor(ST.stars/10)+1, into=ST.stars%10, C=2*Math.PI*58, off=C*(1-into/10);
   var BADGES=[
     {e:'⭐',n:'أول نجمة',ok:ST.stars>=1},{e:'🌟',n:'10 نجوم',ok:ST.stars>=10},{e:'👑',n:'25 نجمة',ok:ST.stars>=25},
-    {e:'🏅',n:'أنهيت مفهوم',ok:doneCount()>=1},{e:'🎬',n:'شاهدت فيديو',ok:seenCount()>=1},
+    {e:'🏅',n:'أنهيت مفهوم',ok:doneCount()>=1},{e:'🎬',n:'شاهدت مقطع',ok:seenCount()>=1},
     {e:'🏆',n:'أنهيت مجال',ok:DOMAINS.some(function(d){return d.concepts.every(function(c){return ST.done[c];});})}
   ];
   view.innerHTML=top('ملفي','')+
     '<div class="pcard"><div class="ring"><svg viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="58" fill="none" stroke="var(--line)" stroke-width="8"/><circle id="ringp" cx="64" cy="64" r="58" fill="none" stroke="var(--orange)" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/></svg><div class="avbig" id="avbig">'+ST.avatar+'</div></div>'+
     '<div class="lvl">المستوى '+lvl+' · '+into+' من 10 نجوم</div>'+
     '<label for="nm" class="hint">اسمك</label><input class="nameinp" id="nm" maxlength="12" value="'+esc(ST.name)+'" placeholder="اكتب اسمك" autocomplete="off">'+
-    '<div class="stats"><div class="stat"><b>'+ST.stars+'</b><small>نجمة</small></div><div class="stat"><b>'+doneCount()+'</b><small>مفهوم</small></div><div class="stat"><b>'+seenCount()+'</b><small>فيديو</small></div></div></div>'+
+    '<div class="stats"><div class="stat"><b>'+ST.stars+'</b><small>نجمة</small></div><div class="stat"><b>'+doneCount()+'</b><small>مفهوم</small></div><div class="stat"><b>'+seenCount()+'</b><small>مقطع</small></div></div></div>'+
     '<div class="label">اختار شخصيتك</div><div class="avs">'+AVATARS.map(function(a){ return '<button class="avb'+(a===ST.avatar?' on':'')+'" data-av="'+a+'" aria-label="شخصية">'+a+'</button>'; }).join('')+'</div>'+
     '<div class="label">إنجازاتك</div><div class="badges">'+BADGES.map(function(b){ return '<div class="badge'+(b.ok?'':' lock')+'"><span class="be">'+b.e+'</span>'+b.n+'</div>'; }).join('')+'</div>'+
     '<div class="label">الإعدادات</div>'+
     '<button class="setrow" data-sound="1" role="switch" aria-checked="'+(ST.sound?'true':'false')+'"><span>صوت الشرح</span><span class="sw'+(ST.sound?' on':'')+'" id="sw"></span></button>'+
+    '<div class="setrow"><span>الشكل</span><span class="fchips" style="margin:0;padding:0">'+ [['auto','تلقائي'],['light','فاتح'],['dark','داكن']].map(function(t){return '<button class="fchip'+((ST.theme||'auto')===t[0]?' on':'')+'" data-theme-set="'+t[0]+'">'+t[1]+'</button>';}).join('')+'</span></div>'+
     '<div id="rst"><button class="setrow danger" data-reset="1">مسح التقدم والبدء من جديد</button></div>'+
     voiceNote()+'<p class="about">مسار · نسخة تجريبية للعرض</p>';
 }
@@ -345,7 +352,7 @@ function conceptScreen(key){
   var C=CONCEPTS[key], d=DOM[C.domain];
   view.innerHTML=top(C.title,'d-'+C.domain)+
     '<div class="chero tone-'+d.tone+'"><div class="big" aria-hidden="true">'+C.icon+'</div><b>'+C.title+'</b><small>'+C.sub+'</small></div>'+
-    '<div class="actions"><button class="btn alt" data-go="v-'+key+'">🎬 فيديو الشرح</button><button class="btn" data-go="a-'+key+'">🎯 النشاط</button></div>'+
+    '<div class="actions"><button class="btn alt" data-go="v-'+key+'">🎬 مقطع الشرح</button><button class="btn" data-go="a-'+key+'">🎯 النشاط</button></div>'+
     '<div class="label">اضغط وجرّب</div><div id="ex" style="display:flex;flex-direction:column;gap:16px;min-width:0"></div>'+
     '<div class="info"><h3>فكرة الشرح</h3><p>'+C.idea+'</p></div><div class="info"><h3>هدف التعلم</h3><p>'+C.goal+'</p></div>'+
     '<button class="cta" data-go="a-'+key+'">ابدأ النشاط</button>';
@@ -360,10 +367,9 @@ function videoScreen(key){
     '<div class="player tone-'+d.tone+'" id="pl">'+(file?'<video controls playsinline preload="metadata" src="'+esc(file)+'"></video>':'')+'</div>'+
     (file?'':'<div class="ctrls"><button class="cbtn" id="pp" data-vp="1" aria-label="تشغيل">▶</button><div class="tl"><div class="pbar"><i id="vb" style="width:0%"></i></div><span id="vt">0:00 / '+vdur(key)+'</span></div><button class="cbtn alt" data-vr="1" aria-label="من الأول">↺</button></div>')+
     '<div><h2 style="font-size:1.3rem">'+C.title+'</h2><p class="hint" style="text-align:start">'+d.name+'</p></div>'+
-    '<div class="info"><h3>في الفيديو</h3><p>'+C.idea+'</p></div>'+
+    '<div class="info"><h3>في المقطع</h3><p>'+C.idea+'</p></div>'+
     '<div class="actions"><button class="btn alt" data-go="c-'+key+'">📖 الشرح</button><button class="btn" data-go="a-'+key+'">🎯 النشاط</button></div>'+
-    (file?'':'<p class="note">دي فيديوهات تجريبية بتعرض الشرح خطوة خطوة، وبتتبدل بفيديوهات حقيقية.</p>')+
-    '<div class="sech"><h2>فيديوهات تانية</h2></div><div class="vlist">'+others.map(vrow).join('')+'</div>';
+    '<div class="sech"><h2>مقاطع أخرى</h2></div><div class="vlist">'+others.map(vrow).join('')+'</div>';
   if(file){ var v=view.querySelector('video'); if(v) v.addEventListener('ended',function(){ ST.seen[key]=true; save(); }); return; }
 
   function show(first){
@@ -413,7 +419,7 @@ function activityScreen(key){
     view.innerHTML=top('أحسنت!','c-'+key)+
       '<div class="stage tone-orange"><div class="starsbig" aria-hidden="true">'+'<span>⭐</span>'.repeat(S.total)+'</div><div class="bignum small">أحسنت!</div><p class="cap">جمعت '+S.stars+' نجوم</p></div>'+
       '<button class="cta" id="again">العب تاني</button>'+
-      (ALL.indexOf(key)<ALL.length-1?'<button class="cta alt" data-go="c-'+ALL[ALL.indexOf(key)+1]+'">المفهوم اللي بعهذا</button>':'')+
+      (ALL.indexOf(key)<ALL.length-1?'<button class="cta alt" data-go="c-'+ALL[ALL.indexOf(key)+1]+'">المفهوم التالي</button>':'')+
       '<button class="cta alt" data-go="home">الرئيسية</button>';
     say('أحسنت! جمعت '+S.stars+' نجوم');
   }
@@ -490,6 +496,8 @@ shell.addEventListener('click',function(e){
   }
   if(e.target.closest('[data-resetno]')){ meScreen(); return; }
   if(e.target.closest('[data-resetyes]')){ ST.stars=0; ST.done={}; ST.seen={}; save(); meScreen(); return; }
+  var th=e.target.closest('[data-theme-set]');
+  if(th){ ST.theme=th.dataset.themeSet; save(); applyTheme(); meScreen(); return; }
   if(screenClick) screenClick(e);
 });
 shell.addEventListener('input',function(e){
